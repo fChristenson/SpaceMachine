@@ -2,30 +2,65 @@ package se.fidde.spacemachine;
 
 import java.awt.AWTException;
 import java.awt.Robot;
-import java.awt.event.KeyEvent;
+
+import javax.swing.JOptionPane;
 
 public class Clicker implements Runnable {
 
-    public boolean loopFlag;
+    private boolean isRunning;
+    private int delay;
+    private int keyToPress;
     private Robot robot;
 
-    public Clicker() {
-        try {
-            robot = new Robot();
-        } catch (AWTException e) {
-            e.printStackTrace();
-        }
+    public Clicker() throws AWTException {
+        robot = new Robot();
     }
 
     @Override
     public void run() {
-        loopFlag = true;
+        isRunning = true;
         do {
-            robot.keyPress(KeyEvent.VK_SPACE);
-            robot.keyRelease(KeyEvent.VK_SPACE);
-            System.out.println("Pressed space...");
-            robot.setAutoDelay(10000);
-        } while (loopFlag);
+            try {
+                robot.keyPress(keyToPress);
+                robot.keyRelease(keyToPress);
+
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null,
+                        "Ooops that button doesnt work right now!", null,
+                        JOptionPane.ERROR_MESSAGE);
+                isRunning = false;
+                break;
+            }
+            robot.setAutoDelay(delay * 1000);
+        } while (isRunning);
+    }
+
+    public void stopClicker() {
+        isRunning = false;
+    }
+
+    public int getDelay() {
+        return delay;
+    }
+
+    public void setDelay(int delay) {
+        this.delay = delay;
+    }
+
+    public boolean isRunning() {
+        return isRunning;
+    }
+
+    public void setRunning(boolean isRunning) {
+        this.isRunning = isRunning;
+    }
+
+    public int getKeyToPress() {
+        return keyToPress;
+    }
+
+    public void setKeyToPress(int keyToPress) {
+        this.keyToPress = keyToPress;
     }
 
 }
